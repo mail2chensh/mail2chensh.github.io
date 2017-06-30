@@ -1,7 +1,9 @@
 ---
-title: Patching an ReSigning iOS Apps
+title: Patching and Re-Signing iOS Apps
 date: 2017-06-30 08:26:23
-tags: iOS 翻译
+tags: 
+    - iOS
+    - 翻译
 ---
 
 
