@@ -3,9 +3,9 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Chensh Blog
-subtitle: Find What U Want!
-description: miao~
+title: Forest Mist
+subtitle: 时は离れてるても、君の心は近くに感じる
+description: 举眉间仲夏，绿荫里蝉鸣
 author: Chensh
 language: zh-CN
 timezone: Asia/Shanghai
@@ -63,7 +63,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
