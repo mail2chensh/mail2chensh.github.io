@@ -1,0 +1,271 @@
+---
+title: iOS应用打补丁及重签名操作实战
+date: 2017-06-30 08:39:51
+tags: [iOS]
+---
+
+
+
+# iOS Apps打补丁及重签名实战操作笔记
+
+**原文：** [Patching and Re-Signing iOS Apps](https://github.com/mail2chensh/OSG_Leaning/blob/master/Patching_and_ReSigning_iOS_Apps.md)
+
+以下笔记内容基于上面👆的翻译文章后的实战操作，没有阅读过原文的请先阅读一遍。
+
+
+
+## 工欲善其事必先利其器
+
+#### 1. 安装包及Frida动态库
+
+请先下载以下素材：
+
+- App安装包：  [UnCrackable_Level1.ipa](https://github.com/OWASP/owasp-mstg/blob/master/Crackmes/iOS/Level_01/UnCrackable_Level1.ipa)
+- Frida动态库：[FridaGadget.dylib](https://build.frida.re/frida/ios/lib/FridaGadget.dylib)
+
+#### 2. mobileprovision 文件
+
+拥有开发者账号的，可以直接登录苹果开发者官网，然后新建一个App ID。
+
+这里我创建的App ID是： **com.osg.uncrack**
+
+根据文章要求，进而创建一个provisioning文件： **COM_OSG_UNCRACK.mobileprovision**
+
+
+
+#### 3. 创建 entitlements.plist文件
+
+创建一个权限文件，名为：**entitlements.plist**，然后填入一下内容注意需要将其中的标识符改为你自己的账号标识符。
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>application-identifier</key>
+<string>P683E34A2C.com.osg.uncrack</string>
+<key>com.apple.developer.team-identifier</key>
+<string>P683E34A2C</string>
+<key>get-task-allow</key>
+<true/>
+<key>keychain-access-groups</key>
+<array>
+<string>P683E34A2C.*</string>
+</array>
+</dict>
+</plist>
+```
+
+
+
+#### 4. 下载并生成optool工具
+
+根据原文的操作，我们在github上面克隆optool的仓库，并更新子模块。
+
+![](https://ww1.sinaimg.cn/large/006tNbRwgy1fgjwrnkteyj30uw06otae.jpg)
+
+![](https://ww1.sinaimg.cn/large/006tNbRwgy1fgjwsvftckj31kw03wabr.jpg)
+
+
+
+更新完毕后，我们用Xcode打开工程，运行一下，就会生成optool工具了。在工程目录下的Produce里面，右键选择**Show in Finder**，然后在打开的文件夹里面，将文件拷贝到目录**/usr/bin/**下。
+
+![](https://ww2.sinaimg.cn/large/006tNbRwgy1fgjwwzryj2j30jq0zyak4.jpg)
+
+
+
+这样就可以在终端里面直接使用optool这个命令了。
+
+![](https://ww2.sinaimg.cn/large/006tNbRwgy1fgjwypdkr2j31ja0lwwj5.jpg)
+
+
+
+#### 5. 查询本地的证书
+
+使用**security**命令查询本地钥匙串里面的证书。
+
+![](https://ww1.sinaimg.cn/large/006tNbRwgy1fgjx0d7gsaj31hk054q4m.jpg)
+
+这里我们将要用到的是第二个，也就是developer开发环境下的证书。我们把唯一标识码记录下来，一会重签名的时候会用到。
+
+
+
+#### 6. 安装ios-depoy
+
+```shell
+npm install -g ios-deploy
+```
+
+
+
+#### 7. 安装Frida
+
+```shell
+sudo pip install frida
+```
+
+
+
+到这里，基本上需要的东西都已经准备齐全了，我们新建一个文件夹**resign**，将上面所有的东西都放在一起，接下来就要开始打补丁和重签名了。
+
+![](https://ww2.sinaimg.cn/large/006tNbRwgy1fgjx3vv497j30rg07adhd.jpg)
+
+
+
+## 拆包清洗
+
+
+
+#### 1. 将ipa包加压缩
+
+```shell
+unzip UnCrackable_Level1.ipa
+```
+
+可以看到解压出一个Payload文件夹。
+
+![](https://ww3.sinaimg.cn/large/006tKfTcgy1fgjxawbhnjj311407omz4.jpg)
+
+
+
+#### 2. 拷贝动态库到资源包里面
+
+```shell
+$ cp FridaGadget.dylib Payload/UnCrackable\ Level\ 1.app/
+```
+
+![](https://ww4.sinaimg.cn/large/006tKfTcgy1fgjxmtger6j313010c15o.jpg)
+
+
+
+#### 3. 额外加载动态库，使用optool插入加载命令到二进制文件
+
+```shell
+$ optool install -c load -p "@executable_path/FridaGadget.dylib" -t Payload/UnCrackable\ Level\ 1.app/UnCrackable\ Level\ 1
+```
+
+![](https://ww1.sinaimg.cn/large/006tKfTcgy1fgjxomhgj6j31kw09bn04.jpg)
+
+其中 **-c** 为指定 **load_command** 命令，**-p** 指定动态库的路径， **-t**指定目标文件。
+
+
+
+#### 4. 拷贝描述文件，并改名为embedded.mobileprovision
+
+```shell
+$ cp COM_OSG_UNCRACK.mobileprovision Payload/UnCrackable\ Level\ 1.app/embedded.mobileprovision
+```
+
+
+
+#### 5. 将info.plist文件里面的包名更改为你自己的包名
+
+![](https://ww4.sinaimg.cn/large/006tKfTcgy1fgjxs4z6ckj30tq0y87cn.jpg)
+
+
+
+#### 6. 使用codesign来进行代码签名
+
+![](https://ww3.sinaimg.cn/large/006tKfTcgy1fgjxtd3i1gj31kw0cf0x1.jpg)
+
+
+
+## 安装运行
+
+到这里基本上打补丁和重签名就完成了，接下来可以使用ios-deploy这个工具来安装应用到手机，也可以直接重新压缩为zip格式并改为ipa后缀来安装。
+
+```shell
+$ ios-deploy --debug --bundle Payload/UnCrackable\ Level\ 1.app/
+```
+
+可以看到启动成功，并安装到手机上面，而且还进入lldb的调试模式：
+
+![](https://ww3.sinaimg.cn/large/006tKfTcgy1fgjxhgrv55j31kw097tef.jpg)
+
+
+
+另外，我们可以看到终端打印出来Frida已经运行，并且开启了监听端口。
+
+![](https://ww2.sinaimg.cn/large/006tNbRwgy1fgkemkfitgj31ak01o3z7.jpg)
+
+
+
+接下来我们来验证一下我们的frida是否成功插入app里面。
+
+运行下面的命令：
+
+```shell
+$ frida-ps -U
+```
+
+可以看到对应的Server：
+
+![](https://ww1.sinaimg.cn/large/006tKfTcgy1fgjxjm8zv5j30bw04kq34.jpg)
+
+
+
+至此，我们的重签名步骤也全部完成了。✌️
+
+
+
+
+
+## 打开新世界大门
+
+然而，当我们结束了以上的操作步骤，我们会觉得有点点的小空虚，甚至有点茫然？？？exm？就这样结束了？好像没有多大的意思，没有感受到一点点打补丁的快感。
+
+我们将本文实验的UnCrackable app安装到手机后，打开的界面是这样的：
+
+
+
+![](https://ww2.sinaimg.cn/large/006tKfTcgy1fgps0g2diwj31340rw40c.jpg)
+
+
+
+一个非常简洁的界面，这里告诉了我们有一个秘密藏在了一个隐藏的Label，你想要通关，就要找出那个label。将label的内容填入输入框内，点击按钮就可以进行验证密文是否正确。
+
+
+
+现在我们的扩展任务就是将密文找出来破解掉。
+
+这里的笔者的简单思路是这样的：既然有一个隐藏的label在这个界面上，那么只要遍历这个界面的子视图，判断是否为label类，并且判断是否为隐藏属性，如果都符合，那应该就是我们要找的通过密文了。
+
+我们可以写一个小小的Tweak，来实现我们的思路。
+
+Tweak内容如下： 
+
+![](https://ww1.sinaimg.cn/large/006tKfTcgy1fgprs06ck5j31180ymte1.jpg)
+
+
+
+这里可能有朋友会问，我怎么知道该hook哪个类呢？这里有很多种方法，例如可以dump应用的头文件，也可以使用Hopper来查看反汇编的代码，都可以很容易的找到这个界面类，当然，我们上面安装的ios-deploy工具和Frida都可以完成这个功能，这里就不一一展开。
+
+这里我们将这个Tweak文件编译打包成dylib文件，这里我已经提供好了，看官可以在这里下载：
+
+补丁包下载地址：  [UncrackTw.dylib](http://7xiunj.com1.z0.glb.clouddn.com/uncracktw.dylib)
+
+之后会有专题专门介绍如何编写Tweak生成dylib文件的，这里先不展开叙述。
+
+
+
+这样一来，我们就可以重复上面我们的操作了，将我们下载的  **UncrackTw.dylib**文件作为补丁插入到app里面，然后进行重签名，安装到我们的机子后，我们看看出来的效果界面是这样的：
+
+我们可以看到，这里我们的补丁已经将这个界面隐藏的label找出来，并且将它的属性修改为可见，还把密文自动填入输入框中：
+
+![](https://ww3.sinaimg.cn/large/006tKfTcgy1fgpsdjmdczj30lo0gsgms.jpg)
+
+
+
+我们可以点击Verify按钮来验证密文是否正确： 
+
+![](https://ww2.sinaimg.cn/large/006tKfTcgy1fgpsfbr9ifj30le0p6jsr.jpg)
+
+
+
+可以看到，我们找到了正确的密文。至此，我们也算是正式的体验了一把小小的hack。
+
+
+
+接下来就开启了一个新世界，怎么玩就看少年你了！！
+
+![](https://ww1.sinaimg.cn/large/006tKfTcgy1fgpsk3r7b3j308c08c3ys.jpg)
